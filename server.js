@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const { Client } = require('pg');
 const bodyParser = require('body-parser');
+var cors = require('cors');
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -13,6 +14,7 @@ const client = new Client({
 client.connect();
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 // Put all API endpoints under '/api'
