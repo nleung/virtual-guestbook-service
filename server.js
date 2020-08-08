@@ -4,7 +4,7 @@ const { Client } = require('pg');
 const bodyParser = require('body-parser');
 
 const client = new Client({
-  connectionString: "postgres://qntuhuqhkmbrlp:75ada0b102549a8d9652c68d7676552d1ee9f18b06a4a745dcde8a80834f1e7a@ec2-34-236-215-156.compute-1.amazonaws.com:5432/d2rhnbjhri8hfp",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
