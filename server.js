@@ -35,7 +35,7 @@ app.get('/api/debug', (req, res) => {
 });
 
 app.get('/api/posts/:event_id', (req, res) => {
-  const text = 'SELECT * FROM posts WHERE event_id = $1 ORDER BY last_updated'
+  const text = 'SELECT * FROM posts WHERE event_id = $1 ORDER BY last_updated DESC'
   const values = [ req.params.event_id ]
   client.query(text, values, (err, queryRes) => {
     if (err) {
