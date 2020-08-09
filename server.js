@@ -35,7 +35,7 @@ app.get('/api/debug', (req, res) => {
 });
 
 app.get('/api/posts/:event_id', (req, res) => {
-  const text = 'SELECT * FROM posts WHERE event_id = $1'
+  const text = 'SELECT * FROM posts WHERE event_id = $1 ORDER BY last_updated'
   const values = [ req.params.event_id ]
   client.query(text, values, (err, queryRes) => {
     if (err) {
@@ -50,8 +50,8 @@ app.get('/api/posts/:event_id', (req, res) => {
 });
 
 app.post('/api/posts/create', function (req, res) {
-  const text = 'INSERT INTO posts (event_id, name, picture_url, comment) VALUES ($1, $2, $3, $4) RETURNING *'
-  const values = [req.body.event_id, req.body.name, req.body.picture_url, req.body.comment]
+  const text = 'INSERT INTO posts (event_id, name, picture_url, comment, last_updated) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+  const values = [req.body.event_id, req.body.name, req.body.picture_url, req.body.comment, Date.now()]
   client.query(text, values, (err, queryRes) => {
     if (err) {
       console.log(err.stack)
