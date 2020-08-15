@@ -3,6 +3,7 @@ const path = require('path');
 const { Client } = require('pg');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+var aws = require('aws-sdk');
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -12,6 +13,13 @@ const client = new Client({
 });
 
 client.connect();
+
+aws.config.update({
+  region: 'us-west-2',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  signature: 'v4'
+})
 
 const app = express();
 app.use(cors());
@@ -60,7 +68,29 @@ app.post('/api/posts/create', function (req, res) {
       res.status(200).json(queryRes.rows[0])
     }
   })
-})
+});
+
+app.post('/api/create_signed_url', function (req, res) {
+  const s3 = new aws.S3();  // Create a new instance of S3
+  const s3Params = {
+    Bucket: 'virtual-guestbook',
+    Key: req.body.file_name,
+    Expires: 500,
+    ContentType: req.body.file_type,
+    ACL: 'public-read'
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (err, signed_url) => {
+    if (err) {
+      console.log(err)
+      res.send(err.stack)
+    } else {
+      res.status(200).json({
+        'signed_url': signed_url
+      });
+    }
+  });
+});
 
 const port = process.env.PORT || 5000;
 app.listen(port);
