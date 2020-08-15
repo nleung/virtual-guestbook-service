@@ -86,7 +86,8 @@ app.post('/api/create_signed_url', function (req, res) {
       res.send(err.stack)
     } else {
       res.status(200).json({
-        'signed_url': signed_url
+        'signed_url': signed_url,
+        'object_url': "https://virtual-guestbook.s3-us-west-2.amazonaws.com/" + encodeURIComponent(req.body.file_name)
       });
     }
   });
